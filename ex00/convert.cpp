@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include <string>
 
-int validity_check(const std::string str){
+int validity_check(const char* str){
 	int dec_points = 0;
 	int e_count = 0;
+	int f_count = 0;
 
 	const std::string sp_cases[6] = {"nan", "inf", "-inf", "nanf", "inff", "-inff"};
 	for (int i = 0; i < 6; ++i)
@@ -12,25 +13,30 @@ int validity_check(const std::string str){
 		if (str == sp_cases[i])
 			return ((i % 3) * 10);
 	}
-	for (size_t i = 0; i < str.size(); ++i)
+	for (size_t i = 0; str[i]; ++i)
 	{
 		if (str[i] == '.')
 			++dec_points;
 		else if (str[i] == 'f' && str[i + 1] != 0)
 			return (-1);
 		else if (str[i] == 'e' &&
-				!(str[i + 1]  == '+' || str[i + 1] == '-'
-				|| str[i + 1]  == 0 || isdigit(str[i + 1])))
+				!(str[i + 1]) )
 			return (-2);
 		else if (str[i] == 'e')
 			++e_count;
-		else if ((str[i] == '+' || str[i] == '-') && !(i == 0 || str[i - 1] == 'e'))
+		else if ((str[i] == '+' || str[i] == '-') && !((i == 0 || str[i - 1] == 'e') && str[i + 1]))
 			return (-3);
 		else if (!(str[i] == 'f' || str[i] == '-' || str[i] == '+' || isdigit(str[i])))
 			return (-4);
+		else if (str[i] == 'f')
+			++fcount;
 		if (dec_points > 1 || e_count > 1)
 			return (-5);
 	}
+	if (fcount)
+		return 1;
+	else if (dec_points || e_count)
+		return 2;
 	return (0);
 }
 int main(int argc, char **argv)
