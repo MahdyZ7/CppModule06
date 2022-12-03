@@ -6,7 +6,7 @@
 /*   By: ayassin <ayassin@student.42abudhabi.ae>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/02 14:49:01 by ayassin           #+#    #+#             */
-/*   Updated: 2022/12/02 19:30:59 by ayassin          ###   ########.fr       */
+/*   Updated: 2022/12/03 16:11:46 by ayassin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,23 +18,24 @@ int main(int argc, char **argv)
 {
 	try
 	{
-		int check1 = 0;
 		if (argc != 2)
 			throw std::invalid_argument("wrong number of arguments");
-		check1 = validity_check(argv[1]);
-		if (check1 == 3)
+		switch (validity_check(argv[1]))
 		{
-			std::cout << "char: " << static_cast<char>(argv[1][0]) << std::endl;
-			std::cout << "int: " << static_cast<int>(argv[1][0]) << std::endl;	
-			std::cout << "float: " << static_cast<float>(argv[1][0]) << ".0f" << std::endl;
-			std::cout << "double: " << static_cast<double>(argv[1][0]) << ".0" << std::endl;
-		}
-		else
-		{
-			print_char(argv[1]);
-			print_int(argv[1], check1 < 10);
-			print_float(argv[1]);
-			print_double(argv[1]);
+			case 0:
+				print_int(std::atoi(argv[1]));
+				break;
+			case 1:
+				print_float(std::atof(argv[1]));
+				break;
+			case 2:
+				print_double(strtod(argv[1], NULL));
+				break;
+			case 3:
+				print_char(argv[1][0]);
+				break;
+			default:
+				print_spc(argv[1]);
 		}
 		return (0);
 	}
@@ -42,9 +43,8 @@ int main(int argc, char **argv)
 	{
 		std::cerr << "Inavlid input: " << e.what() << '\n';
 		return (-1);
-	}
+	};
 }
-
 int validity_check(const char* str){
 	int dec_points = 0;
 	int e_count = 0;
@@ -54,17 +54,12 @@ int validity_check(const char* str){
 	for (int i = 0; i < 6; ++i)
 	{
 		if (str == sp_cases[i])
-			return ((i % 3) * 10);
+			return ((i + 1) * 10);
 	}
-	if (str[0] >= 32 && str[0] < 127 && str[1] == 0 )
-	{
-		std::cout << "32\n";
+	if ((str[0] >= 32 && str[0] < '0') || (str[0] > '9' && str[0] < 127 && str[1] == 0 ))
 		return 3;
-	}
 	for (size_t i = 0; str[i]; ++i)
 	{
-		// if (str[i] == '.' && !isdigit(str[i+1]))
-		// 	throw std::invalid_argument("decimal point must be followed by a digit");
 		if (str[i] == '.')
 			++dec_points;
 		else if (str[i] == 'f' && str[i + 1] != 0)
@@ -83,10 +78,16 @@ int validity_check(const char* str){
 		if (dec_points > 1 || e_count > 1)
 			throw std::invalid_argument("invalid number of decimal points or e");
 	}
-	if (f_count && (strtod(str, NULL) == INFINITY || strtod(str, NULL) == -INFINITY || 
-			static_cast<double>(static_cast<float>(strtod(str, NULL))) != strtod(str, NULL)))
+	if (f_count && !(dec_points + e_count))
+		throw std::invalid_argument("f and . must be used together");
+	if (f_count && (strtod(str, NULL) == INFINITY || strtod(str, NULL) == -INFINITY ||
+			static_cast<float>(strtod(str, NULL)) == INFINITY || static_cast<float>(strtod(str, NULL)) == -INFINITY))
 		throw std::invalid_argument("float overflow");
+	if (f_count)
+		return 1;
 	else if (dec_points || e_count)
 		return 2;
+	else if (static_cast<double>(atoi(str)) != strtod(str, NULL))
+		throw std::invalid_argument("Int overflow");
 	return (0);
 }

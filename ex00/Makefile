@@ -6,13 +6,13 @@
 #    By: ayassin <ayassin@student.42abudhabi.ae>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/24 18:00:42 by ayassin           #+#    #+#              #
-#    Updated: 2022/12/02 19:31:42 by ayassin          ###   ########.fr        #
+#    Updated: 2022/12/03 16:14:35 by ayassin          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = convert
 
-SRC = convert.cpp convert_utils.cpp
+SRC = convert.cpp convert_helper.cpp
 
 CC = c++
 

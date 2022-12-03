@@ -5,28 +5,34 @@
 #                                                     +:+ +:+         +:+      #
 #    By: ayassin <ayassin@student.42abudhabi.ae>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/11/24 12:51:59 by ayassin           #+#    #+#              #
-#    Updated: 2022/12/03 11:21:08 by ayassin          ###   ########.fr        #
+#    Created: 2022/10/24 18:00:42 by ayassin           #+#    #+#              #
+#    Updated: 2022/12/03 10:52:04 by ayassin          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+NAME = typeinfo
 
-SUBDIRS = ex00 ex01 ex02
+SRC = typeinfo.cpp main.cpp
 
-all:
-	for dir in $(SUBDIRS); do \
-        $(MAKE) all -C $$dir; \
-    done
+CC = c++
+
+CFLAGS = -Wall -Werror -Wextra -std=c++98
+
+OBJS = $(SRC:.cpp=.o)
+
+all : $(NAME)
+
+.cpp.o:
+	$(CC) $(CFLAGS) -c $^ -o $@
+
+$(NAME) : $(OBJS)
+	$(CC) $(CFLAGS) $(SRC) -o $(NAME)
 
 clean:
-	for dir in $(SUBDIRS); do \
-        $(MAKE) clean -C $$dir; \
-    done
+	rm -f $(OBJS)
 
 fclean: clean
-	for dir in $(SUBDIRS); do \
-        $(MAKE) fclean -C $$dir; \
-    done
+	rm -f $(NAME)
 
 re : fclean all
 
